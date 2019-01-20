@@ -6,7 +6,7 @@
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/20 09:53:21 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/01/20 11:10:13 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/01/20 12:13:02 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	ft_putchar(char c)
 
 int		key_hook(int key, void *param)
 {
-	ft_putchar('X');
+	ft_putchar(key);
 	return (0);
 }
 
