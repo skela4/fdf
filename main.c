@@ -6,11 +6,11 @@
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/20 09:53:21 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/01/20 15:39:18 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/03/27 12:12:31 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <mlx.h>
+#include "minilibx_macos/mlx.h"
 #include <stdio.h>
 #include <unistd.h>
 #include "fdf.h"
