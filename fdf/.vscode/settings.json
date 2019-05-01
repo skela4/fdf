@@ -1,0 +1,39 @@
+{
+    "workbench.colorTheme": "Panda Syntax",
+    "editor.insertSpaces": false,
+    "editor.fontSize": 13,
+    "editor.renderWhitespace": "boundary",
+    "editor.wordWrap": "off",
+    "editor.cursorBlinking": "smooth",
+    // "editor.cursorStyle": "underline-thin",
+    // "terminal.integrated.cursorStyle": "underline",
+    "editor.matchBrackets": true,
+    "editor.selectionHighlight": false,
+    "editor.fontFamily": "Menlo, Monaco, 'Courier New', monospace",
+    "editor.tokenColorCustomizations": {
+        // "numbers": "#2247EB",
+         "comments": "#6D929C",
+         "functions": "#a0cdff",
+     },
+    "workbench.colorCustomizations": {
+        // "list.inactiveSelectionBackground": "#C5DEF0",
+        "editorCursor.foreground": "#00ff15",
+        "terminalCursor.foreground": "#048f0f9f",
+        "editor.selectionHighlightBackground": "#0000",
+        "editor.selectionHighlightBorder": "#0000",
+        // "sideBar.background": "#07070700",
+        // "sideBar.foreground": "#000000",
+         "editor.background": "#1c1c1c",
+        // "editor.foreground": "#000000",
+        // "sideBarSectionHeader.background": "#CAC9C9",
+        // "sideBarSectionHeader.foreground": "#000000",
+        // "activityBar.border": "#FFFFFF",
+        // "statusBar.background": "#102F97",
+        // "scrollbarSlider.activeBackground": "#77D4CB",
+        // "scrollbarSlider.hoverBackground": "#8CE6DA",
+        // "badge.background": "#81CA91"
+	},
+	"files.associations": {
+		"example.h": "c"
+	}
+}
