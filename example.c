@@ -15,6 +15,14 @@
 int		abs(int a);
 
 
+int		put_pixel(t_mlx *mlx, int x, int y)
+{
+	if (x >= 600 || y >= 600)
+		return (0);
+	(*mlx).img.data[(x * 600 + y)] = 0xFF0000;
+	return (0);
+}
+
 int	main(void)
 {
 	t_mlx	mlx;
@@ -25,17 +33,16 @@ int	main(void)
 	mlx.img.data = (int *)mlx_get_data_addr(mlx.img.img_ptr, &mlx.img.bpp, &mlx.img.size_l, &mlx.img.endian);
 	
 
-	mlx.img.data[(200 * 600 + 200) - 1] = 0xFF0000;
-	mlx.img.data[(200 * 600 + 250) - 1] = 0x00FF00;
-	mlx.img.data[(250 * 600 + 250) - 1] = 0x0000FF;
-	mlx.img.data[(250 * 600 + 200) - 1] = 0xFFFFFF;
+	
 		
+ 	put_pixel(&mlx, 200, 200);
+	put_pixel(&mlx, 250, 200);
+	put_pixel(&mlx, 250, 250);
+	put_pixel(&mlx, 200, 250);
 
 	// y = -0.41 * (x + y) + 0.82 * z      // x = 0.71 * (x - y)
 	
-
-
-	mlx.img.data[(int)(( -0.41 * (200 + 200) + 0.82  ) * 600 + (0.71 * (200 - 200))) - 1] = 0xFF0000;
+	//mlx.img.data[(int)(( -0.41 * (200 + 200) + 0.82  ) * 600 + (0.71 * (200 - 200))) - 1] = 0xFF0000;
 
 
 	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win, mlx.img.img_ptr, 0, 0);
