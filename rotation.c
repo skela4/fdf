@@ -41,40 +41,32 @@ static	int		put_pixel(t_mlx *mlx, int x, int y, int color)
 	return (0);
 }
 
-static	void	draw(t_mlx *mlx, t_point **pt)
+static	void	draw(t_mlx *mlx)
 {
 	int		y;
 	int		x;
-	int		prey;
-	int		prex;
-	int		prez;
 
 	y = 0;
-	prey = 0;
-	prez = (*pt)->z;
-	while (y < 11)
+	while (y < 11 - 1)
 	{
 		x = 0;
-		prex = 0;
-		while (x < 19)
+		while (x < 10 - 1)
 		{
-			line(prex * 30, y * 30, x * 30, y * 30, pt[y * 19 + prex]->z, pt[y * 19 + x]->z, &(*mlx), 0xFF0000);	
-			
-			line(x * 30, prey * 30, x * 30, y * 30, pt[prey * 19 + x]->z, pt[y * 19 + x]->z, &(*mlx), 0xFF0000);
-			
+
+			printf("data[%d][%d] = %d\n", y, x, data[y][x]);
+			line(x * 40, y * 40, (x + 1) * 40, y * 40, data[y][x], data[y][x + 1], &(*mlx), 0xFF0000);
+			line((x + 1) * 40, y * 40, (x + 1) * 40, (y + 1) * 40, data[y][x + 1], data[y + 1][x + 1], &(*mlx), 0xFF0000);
+			line(x * 40, y * 40, x * 40, (y + 1) * 40, data[y][x], data[y + 1][x], &(*mlx), 0xFF0000);
+			line(x * 40, (y + 1) * 40, (x + 1) * 40, (y + 1) * 40, data[y + 1][x], data[y + 1][x + 1], &(*mlx), 0xFF0000);
 			x++;
-			prex = x - 1;
 		}
 		y++;
-		prey = y - 1;
 	}
 }
 
-int	main(int argc, char **argv)
+int	main(void)
 {
 	t_mlx	mlx;
-	t_point	**pt;
-	int		fd;
 	
 	if (!(mlx.ptr = mlx_init()))
 		return (EXIT_FAILURE);
@@ -86,10 +78,8 @@ int	main(int argc, char **argv)
 					&mlx.img.size, &mlx.img.endian)))
 		return (EXIT_FAILURE);
 	
-	fd = open(argv[1], O_RDONLY);
-	pt = ft_create_2d_tab(fd, NULL);
 
-	draw(&mlx, pt);
+	draw(&mlx);
 
 	
 	mlx_put_image_to_window(mlx.ptr, mlx.win, mlx.img.ptr, 0, 0);
