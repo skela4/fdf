@@ -24,6 +24,14 @@
 # define WIN_WIDTH 600
 # define WIN_HEIGHT 600
 
+typedef struct	s_point
+{
+	int			x;
+	int			y;
+	int			z;
+	int			color;
+}				t_point;
+
 typedef struct	s_img
 {
 	void		*ptr;
@@ -38,15 +46,10 @@ typedef struct	s_mlx
 	void		*ptr;
 	void		*win;
 	t_img		img;
+	t_point 	**pt;
 }				t_mlx;
 
-typedef struct	s_point
-{
-	int			x;
-	int			y;
-	int			z;
-	int			color;
-}				t_point;
+
 
 static const int data[11][19] = 
 {
