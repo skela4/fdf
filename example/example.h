@@ -15,11 +15,17 @@
 
 # include <math.h>
 # include <stdio.h>
-# include "./minilibx/mlx.h"
-# include "./minilibx_macos/mlx.h"
+# include "../minilibx/mlx.h"
 
 # define WIN_WIDTH 600
 # define WIN_HEIGHT 600
+
+typedef struct	s_point
+{
+	int			x;
+	int			y;
+	int			z;
+}				t_point;
 
 typedef struct	s_img
 {
@@ -35,6 +41,7 @@ typedef struct	s_mlx
 	void		*mlx_ptr;
 	void		*win;
 	t_img		img;
+	t_point		pt;
 }				t_mlx;
 
 #endif

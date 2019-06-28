@@ -12,31 +12,29 @@
 
 #include "example.h"
 
-int		abs(int a);
+static	void	draw(t_mlx *mlx_p)
+{
+	t_mlx	mlx;
 
+	mlx = *mlx_p;
 
-
-void line(int x0, int y0, int x1, int y1, t_mlx *mlx, int color)
-{ 
-  int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
-  int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1; 
-  int err = (dx>dy ? dx : -dy)/2, e2;
- 
-  for(;;){
-	(*mlx).img.data[(y0 * 1200 + x0)] = color;
-    if (x0==x1 && y0==y1) break;
-    e2 = err;
-    if (e2 >-dx) { err -= dy; x0 += sx; }
-    if (e2 < dy) { err += dx; y0 += sy; }
-  }
+	mlx_clear_window(mlx.mlx_ptr, mlx.win);
+	mlx.img.data[(mlx.pt.y * 600 + mlx.pt.x)] = 0x0000FF;
+	printf("redraw\n");
+	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win, mlx.img.img_ptr, 0, 0);
 }
 
-int		put_pixel(t_mlx *mlx, int x, int y, int color)
+static	int	left(int keycode, t_mlx *mlx_p)
 {
-	if (x >= 1200 || y >= 1200)
-		return (0);
-	(*mlx).img.data[(y * 1200 + x)] = color;
-	return (0);
+	t_mlx	mlx;
+	
+	mlx = *mlx_p;
+	if (keycode % 100 == 61)
+	{
+		mlx.pt.x -= 10;
+	}
+	printf("%d\n", mlx.pt.x);
+	draw(&mlx);
 }
 
 int	main(void)
@@ -44,76 +42,19 @@ int	main(void)
 	t_mlx	mlx;
 	
 	mlx.mlx_ptr = mlx_init();
-	mlx.win = mlx_new_window(mlx.mlx_ptr, WIN_WIDTH, WIN_HEIGHT, "A simple example");
-	mlx.img.img_ptr = mlx_new_image(mlx.mlx_ptr, 1200, 1200);
+	mlx.win = mlx_new_window(mlx.mlx_ptr, 600, 600, "A simple example");
+	mlx.img.img_ptr = mlx_new_image(mlx.mlx_ptr, 600, 600);
 	mlx.img.data = (int *)mlx_get_data_addr(mlx.img.img_ptr, &mlx.img.bpp, &mlx.img.size_l, &mlx.img.endian);
-		
-	// y = -0.41 * (x + y) + 0.82 * z      // x = 0.71 * (x - y)
-	
-	put_pixel(&mlx, (int)(0.71f * (300.0f - 200.0f)), (int)(-(-0.41f * (300.0f + 200.0f)) + 0.82f * 0.0f), 0xFF0000);
-	put_pixel(&mlx, (int)(0.71f * (350.0f - 200.0f)), (int)(-(-0.41f * (350.0f + 200.0f)) + 0.82f * 0.0f), 0xFF0000);
-	put_pixel(&mlx, (int)(0.71f * (350.0f - 250.0f)), (int)(-(-0.41f * (350.0f + 250.0f)) + 0.82f * 0.0f), 0xFF0000);
-	put_pixel(&mlx, (int)(0.71f * (300.0f - 250.0f)), (int)(-(-0.41f * (300.0f + 250.0f)) + 0.82f * 0.0f), 0xFF0000);
 
-	put_pixel(&mlx, (int)(0.71f * (300.0f - 200.0f)), (int)(-(-0.41f * (300.0f + 200.0f)) + 0.82f * 50.0f), 0x00FF00);
-	put_pixel(&mlx, (int)(0.71f * (350.0f - 200.0f)), (int)(-(-0.41f * (350.0f + 200.0f)) + 0.82f * 50.0f), 0x00FF00);
-	put_pixel(&mlx, (int)(0.71f * (350.0f - 250.0f)), (int)(-(-0.41f * (350.0f + 250.0f)) + 0.82f * 50.0f), 0x00FF00);
-	put_pixel(&mlx, (int)(0.71f * (300.0f - 250.0f)), (int)(-(-0.41f * (300.0f + 250.0f)) + 0.82f * 50.0f), 0x00FF00);
-	
-	// line(x0 y0 x1 y1);
-	line((int)(0.71f * (300.0f - 200.0f)), (int)(-(-0.41f * (300.0f + 200.0f)) + 0.82f * 0.0f),\
-	(int)(0.71f * (350.0f - 200.0f)), (int)(-(-0.41f * (350.0f + 200.0f)) + 0.82f * 0.0f), &mlx, 0x00FFFF);
+	mlx.pt.x = 300;
+	mlx.pt.y = 300;
+	mlx.pt.z = 10;
 
-	line((int)(0.71f * (350.0f - 200.0f)), (int)(-(-0.41f * (350.0f + 200.0f)) + 0.82f * 0.0f),\
-	(int)(0.71f * (350.0f - 250.0f)), (int)(-(-0.41f * (350.0f + 250.0f)) + 0.82f * 0.0f), &mlx, 0x00FFFF);
-	
-	line((int)(0.71f * (350.0f - 250.0f)), (int)(-(-0.41f * (350.0f + 250.0f)) + 0.82f * 0.0f),\
-	(int)(0.71f * (300.0f - 250.0f)), (int)(-(-0.41f * (300.0f + 250.0f)) + 0.82f * 0.0f), &mlx, 0x00FFFF);
+	printf("X1\n");
+	draw(&mlx);
+	printf("X2\n");
 
-	line((int)(0.71f * (300.0f - 250.0f)), (int)(-(-0.41f * (300.0f + 250.0f)) + 0.82f * 0.0f),\
-	(int)(0.71f * (300.0f - 200.0f)), (int)(-(-0.41f * (300.0f + 200.0f)) + 0.82f * 0.0f), &mlx, 0x00FFFF);
-
-
-	line((int)(0.71f * (300.0f - 200.0f)), (int)(-(-0.41f * (300.0f + 200.0f)) + 0.82f * 50.0f),\
-	(int)(0.71f * (350.0f - 200.0f)), (int)(-(-0.41f * (350.0f + 200.0f)) + 0.82f * 50.0f), &mlx, 0x00FFFF);
-
-	line((int)(0.71f * (350.0f - 200.0f)), (int)(-(-0.41f * (350.0f + 200.0f)) + 0.82f * 50.0f),\
-	(int)(0.71f * (350.0f - 250.0f)), (int)(-(-0.41f * (350.0f + 250.0f)) + 0.82f * 50.0f), &mlx, 0x00FFFF);
-	
-	line((int)(0.71f * (350.0f - 250.0f)), (int)(-(-0.41f * (350.0f + 250.0f)) + 0.82f * 50.0f),\
-	(int)(0.71f * (300.0f - 250.0f)), (int)(-(-0.41f * (300.0f + 250.0f)) + 0.82f * 50.0f), &mlx, 0x00FFFF);
-
-	line((int)(0.71f * (300.0f - 250.0f)), (int)(-(-0.41f * (300.0f + 250.0f)) + 0.82f * 50.0f),\
-	(int)(0.71f * (300.0f - 200.0f)), (int)(-(-0.41f * (300.0f + 200.0f)) + 0.82f * 50.0f), &mlx, 0x00FFFF);
-	
-
-	line((int)(0.71f * (300.0f - 200.0f)), (int)(-(-0.41f * (300.0f + 200.0f)) + 0.82f * 0.0f),\
-	(int)(0.71f * (300.0f - 200.0f)), (int)(-(-0.41f * (300.0f + 200.0f)) + 0.82f * 50.0f), &mlx, 0x00FFFF);
-
-	line((int)(0.71f * (350.0f - 200.0f)), (int)(-(-0.41f * (350.0f + 200.0f)) + 0.82f * 0.0f),\
-	(int)(0.71f * (350.0f - 200.0f)), (int)(-(-0.41f * (350.0f + 200.0f)) + 0.82f * 50.0f), &mlx, 0x00FFFF);
-
-	line((int)(0.71f * (350.0f - 250.0f)), (int)(-(-0.41f * (350.0f + 250.0f)) + 0.82f * 0.0f),\
-	(int)(0.71f * (350.0f - 250.0f)), (int)(-(-0.41f * (350.0f + 250.0f)) + 0.82f * 50.0f), &mlx, 0x00FFFF);
-
-	line((int)(0.71f * (300.0f - 250.0f)), (int)(-(-0.41f * (300.0f + 250.0f)) + 0.82f * 0.0f),\
-	(int)(0.71f * (300.0f - 250.0f)), (int)(-(-0.41f * (300.0f + 250.0f)) + 0.82f * 50.0f), &mlx, 0x00FFFF);
-
-
-
-	//line(, &mlx, 0x00FFFF);
-
-	//line(, &mlx, 0x00FFFF);
-	
-	//line(, &mlx, 0x00FFFF);
-	
-	//line(, &mlx, 0x00FFFF);
-	
-	//line(, &mlx, 0x00FFFF);
-	
-	//line(, &mlx, 0x00FFFF);
-	
-	mlx_put_image_to_window(mlx.mlx_ptr, mlx.win, mlx.img.img_ptr, 0, 0);
+	mlx_key_hook(mlx.win, &left, &mlx);
 	mlx_loop(mlx.mlx_ptr);
 	return (0);
 }
