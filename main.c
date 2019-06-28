@@ -22,28 +22,13 @@ static	void	ft_exit(t_mlx **mlx_p)
 	exit(0);
 }
 
-static	int		ft_rotate_Z(int angle, t_mlx **mlx_p)
-{
-	mlx_destroy_image((**mlx_p).ptr, (**mlx_p).img.ptr);
-	if (!((**mlx_p).img.ptr = mlx_new_image((**mlx_p).ptr, 600, 600)))
-		return (EXIT_FAILURE);
-	if (!((**mlx_p).img.data = (int *)mlx_get_data_addr((**mlx_p).img.ptr, &(**mlx_p).img.bpp,\
-					&(**mlx_p).img.size, &(**mlx_p).img.endian)))
-		return (EXIT_FAILURE);
-	
-	
-	(**mlx_p).pt[0]->x += 30;	
-	draw(&(**mlx_p), ((**mlx_p).pt));
-	return (0);
-}
-
 static	void	line(int x0, int y0, int x1, int y1, int z0, int z1, t_mlx *mlx, int color)
 { 
 
-	x0 = (int)(0.71 * (x0 - y0)) + 250;
-	y0 = (int)(-(-0.41 * (x0 + y0)) + 0.82 * -z0) + 250;
-	x1 = (int)(0.71 * (x1 - y1)) + 250;
-	y1 = (int)(-(-0.41 * (x1 + y1)) + 0.82 * -z1) + 250;
+	x0 = (int)(0.71 * (x0 - y0)) + 210;
+	y0 = (int)(-(-0.41 * (x0 + y0)) + 0.82 * -z0) + 210;
+	x1 = (int)(0.71 * (x1 - y1)) + 210;
+	y1 = (int)(-(-0.41 * (x1 + y1)) + 0.82 * -z1) + 210;
 
   int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
   int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1; 
@@ -58,19 +43,15 @@ static	void	line(int x0, int y0, int x1, int y1, int z0, int z1, t_mlx *mlx, int
   }
 }
 
-static	int		put_pixel(t_mlx *mlx, int x, int y, int color)
-{
-	(*mlx).img.data[(y * 600 + x)] = color;
-	return (0);
-}
-
-static	void	draw(t_mlx *mlx, t_point **pt)
+static	void	draw(t_mlx *mlx_p, t_point **pt)
 {
 	int		y;
 	int		x;
 	int		prey;
 	int		prex;
+	t_mlx	mlx;
 
+	mlx = *mlx_p;
 	y = 0;
 	prey = 0;
 	while (y < 11)
@@ -79,9 +60,9 @@ static	void	draw(t_mlx *mlx, t_point **pt)
 		prex = 0;
 		while (x < 19)
 		{
-			line(pt[y * 19 + prex]->x, pt[y * 19 + x]->y, pt[y * 19 + x]->x, pt[y * 19 + x]->y, pt[y * 19 + prex]->z, pt[y * 19 + x]->z, &(*mlx), 0xFF0000);	
+			line(pt[y * 19 + prex]->x, pt[y * 19 + x]->y, pt[y * 19 + x]->x, pt[y * 19 + x]->y, pt[y * 19 + prex]->z, pt[y * 19 + x]->z, &mlx, 0xFF0000);	
 			
-			line(pt[y * 19 + x]->x, pt[prey * 19 + x]->y, pt[y * 19 + x]->x, pt[y * 19 + x]->y, pt[prey * 19 + x]->z, pt[y * 19 + x]->z, &(*mlx), 0xFF0000);
+			line(pt[y * 19 + x]->x, pt[prey * 19 + x]->y, pt[y * 19 + x]->x, pt[y * 19 + x]->y, pt[prey * 19 + x]->z, pt[y * 19 + x]->z, &mlx, 0xFF0000);
 			
 			x++;
 			prex = x - 1;
@@ -89,21 +70,26 @@ static	void	draw(t_mlx *mlx, t_point **pt)
 		y++;
 		prey = y - 1;
 	}
+	mlx_put_image_to_window(mlx.ptr, mlx.win, mlx.img.ptr, mlx.w, mlx.h);
 }
 
-static	int	ft_rotate(int keycode, void *param)
+static	int	key_hook(int keycode, void *param)
 {
 	t_mlx *mlx;
 
 	mlx = (t_mlx *)param;
-	//printf("%d\n", keycode % 100);
-	
 	if (keycode % 100 == 7)
 		ft_exit(&mlx);
 	if (keycode % 100 == 61)
-		ft_rotate_Z(-30, &mlx);
+		mlx->w -= 1;
+	if (keycode % 100 == 62)
+		mlx->h -= 1;
 	if (keycode % 100 == 63)
-		ft_rotate_Z(30, &mlx);
+		mlx->w += 1;
+	if (keycode % 100 == 64)
+		mlx->h += 1;
+
+	draw(mlx, mlx->pt);
 	return (0);
 }
 
@@ -112,7 +98,9 @@ int	main(int argc, char **argv)
 	t_mlx	mlx;
 	t_point	**pt;
 	int		fd;
-	
+	int		i;
+	int		j;
+
 	if (!(mlx.ptr = mlx_init()))
 		return (EXIT_FAILURE);
 	if (!(mlx.win = mlx_new_window(mlx.ptr, 600, 600, "Wire Frame")))
@@ -125,9 +113,9 @@ int	main(int argc, char **argv)
 	
 	fd = open(argv[1], O_RDONLY);
 	pt = ft_create_2d_tab(fd, NULL);
-
-	int		i;
-	int		j;
+	
+	mlx.w = 0;
+	mlx.h = 0;
 
 	i = 0;
 	while (i < 11)
@@ -143,9 +131,7 @@ int	main(int argc, char **argv)
 	}
 	mlx.pt = pt;
 	draw(&mlx, pt);
-
-	mlx_put_image_to_window(mlx.ptr, mlx.win, mlx.img.ptr, 0, 0);
-	mlx_key_hook(mlx.win, (*ft_rotate), &mlx);
+	mlx_key_hook(mlx.win, (*key_hook), &mlx);
 	mlx_loop(mlx.ptr);
 	return (0);
 }

@@ -47,6 +47,8 @@ typedef struct	s_mlx
 	void		*win;
 	t_img		img;
 	t_point 	**pt;
+	int			w;
+	int			h;
 }				t_mlx;
 
 
