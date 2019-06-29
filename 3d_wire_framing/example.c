@@ -6,13 +6,12 @@
 /*   By: lmarques <lmarques@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/18 03:51:42 by lmarques          #+#    #+#             */
-/*   Updated: 2019/06/27 02:42:32 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/06/29 21:55:32 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "example.h"
 
-//printf("[mlx_connect] mlx == %p\n", &(*mlx));
 void	mlx_connect(t_mlx *mlx)
 {
 	mlx->w = W;
@@ -155,7 +154,6 @@ void	mlx_draw_image(t_mlx *mlx)
 
 
 
-//printf("[main] mlx == %p\n", &mlx);
 int	main(void)
 {
 	t_mlx	mlx;
