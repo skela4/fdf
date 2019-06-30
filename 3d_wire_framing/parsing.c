@@ -6,16 +6,11 @@
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 22:02:34 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/06/30 05:09:22 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/06/30 06:19:26 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include "gnl/get_next_line.h"
-#include "gnl/libft/libft.h"
-#include <unistd.h>
+#include "example.h"
 
 int		count_word(char	*str)
 {
@@ -86,14 +81,6 @@ int		check_equal_line(char *file)
 	close(fd);
 	return (cols);
 }
-
-typedef	 struct	s_point
-{
-	int	x;
-	int	y;
-	int	z;
-	int	color;
-}		t_point;
 
 int			val(char c)
 { 
@@ -195,6 +182,7 @@ void	get_info_map(int fd, char *line, int cols, t_point **pt)
 {
 	char	**tab;
 	int		pos;
+	int		i;
 
 	pos = 0;
 	tab = NULL;
@@ -202,12 +190,22 @@ void	get_info_map(int fd, char *line, int cols, t_point **pt)
 	{		
 		tab = ft_strsplit(line, ' ');
 		get_z_and_color(tab, cols, &pos, &(*pt));
+		
+		i = 0;
+		while (i < cols)
+		{
+			free(tab[i]);
+			tab[i++] = NULL;
+		}
+		free(tab);
+		tab = NULL;
 		free(line);
 		line = NULL;
 	}
+
 }
 
-t_point		*create_point(int cols, int rows)
+t_point		*init_point(int cols, int rows)
 {
 	int		y;
 	int		x;
@@ -235,27 +233,21 @@ t_point		*create_point(int cols, int rows)
 	return (pt);
 }
 
-int		main(int argc, char **argv)
+t_point		*create_point(int argc, char **argv, int cols, int rows)
 {
 	int		fd;
-	int		cols;
-	int		rows;
+
 	t_point	*pt;
-
 	pt = NULL;
-	cols = 0;
-	rows = 0;
 	(void)argc;
-	rows = count_line(argv[1]);
-	cols = check_equal_line(argv[1]);
 
-	pt = create_point(cols, rows);
+	pt = init_point(cols, rows);
 
 	fd = open(argv[1], O_RDONLY);
 
 	get_info_map(fd, NULL, cols, &pt);
 
-	int		i;
+	/*int		i;
 	i = 0;
 	while (i < rows * cols)
 	{
@@ -263,9 +255,8 @@ int		main(int argc, char **argv)
 		printf("x = %d y = %d z = %d color = %d", pt[i].x, pt[i].y, pt[i].z, pt[i].color);
 		printf("\n");
 		i++;
-	}
-
+	}*/
 	close(fd);
 
-	return (0);
+	return (pt);
 }
