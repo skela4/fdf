@@ -6,7 +6,7 @@
 /*   By: lmarques <lmarques@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/18 03:51:42 by lmarques          #+#    #+#             */
-/*   Updated: 2019/06/30 06:38:15 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/06/30 06:44:06 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ void	mlx_close_image(t_mlx *mlx)
 
 static	void	put_pixel(t_mlx *mlx, int x, int y)
 {
-	mlx->img.data[y * 600 + x] = 0xFF0000;
+	mlx->img.data[(y + 200) * 600 + (x + 200)] = 0xFF0000;
 }
 
 void	mlx_draw_image(t_mlx *mlx, t_point **pt, int cols, int rows)
