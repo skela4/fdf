@@ -6,7 +6,7 @@
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 22:02:34 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/06/30 01:57:01 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/06/30 05:09:22 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,46 +95,99 @@ typedef	 struct	s_point
 	int	color;
 }		t_point;
 
+int			val(char c)
+{ 
+	int		value;
 
-int             ft_natoi(const char *str)
+	value = 0;
+	if (c >= '0' && c <= '9') 
+		value = (int)c - '0'; 
+	if (c >= 'A' && c <= 'F')
+		value = (int)c - 'A' + 10; 
+	if (c >= 'a' && c <= 'f')
+		value = (int)c - 'a' + 10;
+	return (value);	
+}
+
+int   ft_atoi_base(const char *str, int base)
 {
-	long    int             sign;
-	long    int             nb;
+	int len; 
+	int power;
+	int num;
+	int i; 
+	
+	len = 0;
+	power = 1;
+	num = 0;
+	i = 0;
+	if (!str)
+		return (0);
+	if (str[0] == '0' && str[1] == 'x')
+		str += 2;
+	if (str[0] == '0' && str[1] == 'b')
+		str += 2;
+	if (str[0] == '0' && str[1] <= '7')
+		str += 1;
+	len = ft_strlen(str);
+	i = len;
+	while (--i >= 0)
+	{
+		if (val(str[i]) >= base)
+			return (0);
+		num += val(str[i]) * power;
+		power = power * base;
+	} 
+	return (num); 
+}
 
-	sign = 1;
-	nb = 0;
-	while (*str && ((*str >= 9 && *str <= 13) || *str == 32))
-		str++;
-	if (*str && (*str == '-' || *str == '+'))
-		sign = (*(str++) == '-') ? -1 : 1;
-	while (*str && *str >= '0' && *str <= '9' && *str != ',')
-		nb = nb * 10 + *(str++) - '0';
-	return (nb * sign);
+int		ft_detect_base(char *str)
+{
+	int		i;
+
+	i = 0;
+	if (!str)
+		return (0);
+	if (strlen(str) < 2)
+	{
+		if (!(str[i] >= '0' && str[i] <= '9'))
+			return (0);
+		return (10);
+	}
+	if (str[0] == '0' && str[1] == 'x')
+		return (16);
+	if (str[0] == '0' && str[1] == 'b')
+		return (2);
+	if (str[0] == '0' && str[1] <= '7')
+		return (8);
+	if (str[0] == '0' && (str[1] != 'x' || str[1] != 'b' || str[1] >= '8'))
+		return (0);
+	return (10);
 }
 
 void	get_z_and_color(char **tab, int tab_size, int *pos, t_point **pt)
 {
 	int		i;
+	int		base;
 	char	*sep;
+	char	*cop;
 
-	i = 0;
+	i = -1;
+	base = 0;
 	sep = NULL;
-	while (i < tab_size)
+	cop = NULL;
+	while (++i < tab_size)
 	{
 		if (!(sep = ft_strchr(tab[i], ',')))
-		{
-			(*pt)[*pos].z = ft_natoi(tab[i]);
-			(*pt)[*pos].color = 0;
-			(*pos)++;
-		}
+			(base = ft_detect_base(tab[i])) ? (*pt)[(*pos)++].z = ft_atoi_base(tab[i], base) : 0;
 		if (sep)
 		{
-			(*pt)[*pos].z = ft_natoi(tab[i]);
-			sep++;
-			//ft_detect_base(sep);
-			(*pos)++;
+			if (!(cop = ft_strsub(tab[i], 0, (ft_strlen(tab[i])) - ft_strlen(sep))))
+				return;
+			(base = ft_detect_base(cop)) ? (*pt)[*pos].z = ft_atoi_base(cop, base) : 0;
+			(base = ft_detect_base(sep + 1)) ? (*pt)[(*pos)++].color = ft_atoi_base(sep + 1, base) : 0;
+			free(cop);
+			cop = NULL;
 		}
-		i++;
 	}
 }
 
@@ -154,6 +207,34 @@ void	get_info_map(int fd, char *line, int cols, t_point **pt)
 	}
 }
 
+t_point		*create_point(int cols, int rows)
+{
+	int		y;
+	int		x;
+	t_point	*pt;
+
+	y = 0;
+	x = 0;
+	pt = NULL;
+	if (!(pt = (t_point *)malloc(sizeof(*pt) * rows * cols)))
+		return (NULL);
+
+	while (y < cols)
+	{
+		x = 0;
+		while (x < rows)
+		{
+			pt[y * rows + x].x = x;
+			pt[y * rows + x].y = y;
+			pt[y * rows + x].z = 0;
+			pt[y * rows + x].color = 0;
+			x++;
+		}
+		y++;
+	}
+	return (pt);
+}
+
 int		main(int argc, char **argv)
 {
 	int		fd;
@@ -161,27 +242,30 @@ int		main(int argc, char **argv)
 	int		rows;
 	t_point	*pt;
 
-	(void)argc;
+	pt = NULL;
 	cols = 0;
 	rows = 0;
-	pt = NULL;
+	(void)argc;
 	rows = count_line(argv[1]);
 	cols = check_equal_line(argv[1]);
-	//printf("%d %d \n", cols, rows);
 
-	///////////////
+	pt = create_point(cols, rows);
 
-	pt = (t_point *)malloc(sizeof(*pt) * rows * cols);	
 	fd = open(argv[1], O_RDONLY);
+
 	get_info_map(fd, NULL, cols, &pt);
-	close(fd);
+
 	int		i;
 	i = 0;
-	printf("\n");
-	while (i < cols * rows)
+	while (i < rows * cols)
 	{
-		printf("  z   value == %d\n", pt[i].z);
-		printf("color value == %d\n", pt[i++].color);
+		printf("POSITION == %d\n\n", i);
+		printf("x = %d y = %d z = %d color = %d", pt[i].x, pt[i].y, pt[i].z, pt[i].color);
+		printf("\n");
+		i++;
 	}
+
+	close(fd);
+
 	return (0);
 }
