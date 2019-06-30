@@ -27,15 +27,15 @@
 # define W 600
 # define H 600
 
-/*typedef	struct	s_line
+typedef	struct	s_line
 {
 	int			x0;
 	int			y0;
 	int			x1;
 	int			y1;
-	int			color;
 }				t_line;
 
+/*
 typedef struct	s_point
 {
 	int			*x;
@@ -53,6 +53,7 @@ typedef	struct	s_point
 	int		y;
 	int		z;
 	int		color;
+	t_line	l;
 }				t_point;
 
 typedef struct	s_img
@@ -94,6 +95,8 @@ void	get_info_map(int fd, char *line, int cols, t_point **pt);
 
 t_point	*init_point(int cols, int rows);
 t_point	*create_point(int argc, char **argv, int rows, int cols);
+
+void	put_pixel(t_mlx *mlx, int x, int y);
 
 void	rotate_Z(t_point **pt, int cols, int rows, int angle);
 #endif

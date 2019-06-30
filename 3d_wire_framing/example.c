@@ -50,48 +50,33 @@ void	mlx_close_image(t_mlx *mlx)
 	mlx_destroy_image(mlx->mlx_ptr, mlx->img.img_ptr);	
 }
 
-/*void	mlx_create_point(t_mlx *mlx)
-  {
-  int		y;
-  int		x;
+static  void    line(t_mlx *mlx, int x0, int y0, int x1, int y1, int z0, int z1, int color)
+{ 
+	//int dx = abs(mlx->pt.l.x1 - mlx->pt.l.x0), sx = mlx->pt.l.x0 < mlx->pt.l.x1 ? 1 : -1;
+	//int dy = abs(mlx->pt.l.y1 - mlx->pt.l.y0), sy = mlx->pt.l.y0 < mlx->pt.l.y1 ? 1 : -1; 
+	//int err = (dx>dy ? dx : -dy)/2, e2;
 
-  y = 0;
-  x = 0;
-  mlx->pt.scale = 150;
-  mlx->pt.cols = (mlx->h / 2) / mlx->pt.scale;
-  mlx->pt.rows = (mlx->w / 2) / mlx->pt.scale;
-  mlx->pt.x = malloc(sizeof(x) * mlx->pt.rows * mlx->pt.cols);
-  mlx->pt.y = malloc(sizeof(y) * mlx->pt.rows * mlx->pt.cols);
-  mlx->pt.z = malloc(sizeof(x) * mlx->pt.rows * mlx->pt.cols);
-  while (y <  mlx->pt.cols)
-  {
-  x = 0;
-  while (x < mlx->pt.rows)
-  {
-  mlx->pt.y[y * mlx->pt.rows + x] = mlx->pt.scale * y;
-  mlx->pt.x[y * mlx->pt.rows + x] = mlx->pt.scale * x;
-  mlx->pt.z[y * mlx->pt.rows + x] = 0;
-  x++;
-  }
-  y++;
-  }
-  }*/
+	x0 = (int)(0.71 * (x0 - y0)) + 210;
+	y0 = (int)(-(-0.41 * (x0 + y0)) + 0.82 * -z0) + 210;
+	x1 = (int)(0.71 * (x1 - y1)) + 210;
+	y1 = (int)(-(-0.41 * (x1 + y1)) + 0.82 * -z1) + 210;
 
-/*static  void    line(t_mlx *mlx)
-  { 
-  int dx = abs(mlx->pt.l.x1 - mlx->pt.l.x0), sx = mlx->pt.l.x0 < mlx->pt.l.x1 ? 1 : -1;
-  int dy = abs(mlx->pt.l.y1 - mlx->pt.l.y0), sy = mlx->pt.l.y0 < mlx->pt.l.y1 ? 1 : -1; 
-  int err = (dx>dy ? dx : -dy)/2, e2;
+	int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
+	int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1; 
+	int err = (dx>dy ? dx : -dy)/2, e2;
 
-  for(;;){
-  mlx->img.data[(mlx->pt.l.y0 * 600 + mlx->pt.l.x0)] = mlx->pt.l.color;
-  if (mlx->pt.l.x0 == mlx->pt.l.x1 && mlx->pt.l.y0 == mlx->pt.l.y1) break;
-  e2 = err;
-  if (e2 >-dx) { err -= dy; mlx->pt.l.x0 += sx; }
-  if (e2 < dy) { err += dx; mlx->pt.l.y0 += sy; }
-  }
-  }
-  */
+	for(;;)
+	{
+
+		put_pixel(&(*mlx), x0 , y0);
+		//mlx->img.data[(mlx->pt.l.y0 * 600 + mlx->pt.l.x0)] = mlx->pt.l.color;
+		if (x0 == x1 && y0 == y1) break;
+		e2 = err;
+		if (e2 >-dx) { err -= dy; x0 += sx; }
+		if (e2 < dy) { err += dx; y0 += sy; }
+	}
+}
+
 
 /*void	mlx_draw_image(t_mlx *mlx)
   {
@@ -129,29 +114,35 @@ void	mlx_close_image(t_mlx *mlx)
   mlx_put_image_to_window(mlx->mlx_ptr, mlx->win, mlx->img.img_ptr, 0, 0);
   }*/
 
-static	void	put_pixel(t_mlx *mlx, int x, int y)
+
+
+void	put_pixel(t_mlx *mlx, int x, int y)
 {
-	mlx->img.data[(y + 200) * 600 + (x + 100)] = 0xFF0000;
+	mlx->img.data[(y) * 600 + (x)] = 0xFF0000;
 }
 
 void	mlx_draw_image(t_mlx *mlx, t_point **pt, int cols, int rows)
 {
 	int		y;
 	int		x;
-	
-	ft_putnbr(mlx->angle);
-	ft_putchar('\n');
+	int		y_p;
+	int		x_p;
+
 	y = 0;
+	y_p = 0;
 	while (y < cols)
 	{
 		x = 0;
+		x_p = 0;
 		while (x < rows)
 		{
-			put_pixel(&(*mlx), (*pt)[y * rows + x].x , (*pt)[y * rows + x].y);
+			line(&*mlx, (*pt)[y * rows + x_p].x, (*pt)[y * rows + x].y, (*pt)[y * rows + x].x, (*pt)[y * rows + x_p].y, (*pt)[y * rows + x_p].z, (*pt)[y * rows + x].z , 0xFF0000);
+			line(&*mlx, (*pt)[y * rows + x].x, (*pt)[y_p * rows + x].y, (*pt)[y * rows + x].x, (*pt)[y * rows + x_p].y, (*pt)[y_p * rows + x].z, (*pt)[y * rows + x].z , 0XFF0000);
 			x++;
+			x_p = x - 1;
 		}
-
 		y++;
+		y_p = y - 1;
 	}
 	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win, mlx->img.img_ptr, 0, 0);
 }
@@ -164,12 +155,12 @@ static	int		key_hook(int keycode, void *param)
 	mlx = (t_mlx*)param;
 	if (keycode % 100 == 30)
 	{
-		mlx->angle -= 1;
+		mlx->angle = -1;
 		rotate_Z(&*(mlx->pt), mlx->cols, mlx->rows, mlx->angle);
 	}
 	if (keycode % 100 == 32)
 	{
-		mlx->angle += 1;
+		mlx->angle = 1;
 		rotate_Z(&*(mlx->pt), mlx->cols, mlx->rows, mlx->angle);
 	}
 	mlx_clear_image(&*mlx);
@@ -195,23 +186,27 @@ int	main(int argc, char **argv)
 	mlx_connect(&mlx);
 
 	mlx_create_image(&mlx);
-
+	mlx.angle = 1;
 	pt = create_point(argc, argv, rows, cols);
 
 	int		i;
 	while (i < cols * rows)
 	{
-		pt[i].y *= 60;
-		pt[i].x *= 60;
+		pt[i].y += 100;
+		pt[i].x += 100;
 		i++;
 	}
-	rotate_Z(&pt, cols, rows, -10);
+
+	ft_putchar('X');
+
 	mlx_draw_image(&mlx, &pt, cols, rows);
 
 	mlx.pt = &pt;
 	mlx.cols = cols;
 	mlx.rows = rows;
 	mlx_key_hook(mlx.win, (*key_hook), &mlx);
+
+	ft_putchar('X');
 
 	mlx_loop(mlx.mlx_ptr);
 

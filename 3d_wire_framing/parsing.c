@@ -164,6 +164,7 @@ void	get_z_and_color(char **tab, int tab_size, int *pos, t_point **pt)
 	cop = NULL;
 	while (++i < tab_size)
 	{
+		printf("%s\n", tab[i]);
 		if (!(sep = ft_strchr(tab[i], ',')))
 			(base = ft_detect_base(tab[i])) ? (*pt)[(*pos)++].z = ft_atoi_base(tab[i], base) : 0;
 		if (sep)
@@ -222,8 +223,8 @@ t_point		*init_point(int cols, int rows)
 		x = 0;
 		while (x < rows)
 		{
-			pt[y * rows + x].x = x;
-			pt[y * rows + x].y = y;
+			pt[y * rows + x].x = x * 50;
+			pt[y * rows + x].y = y * 50;
 			pt[y * rows + x].z = 0;
 			pt[y * rows + x].color = 0;
 			x++;

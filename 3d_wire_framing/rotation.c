@@ -17,7 +17,7 @@ void	rotate_Z(t_point **pt, int cols, int rows, int angle)
 	{
 		y = (*pt)[i].y;
 		x = (*pt)[i].x;
-		(*pt)[i].y = (int)((float)y * cos_theta + (float)x * sin_theta);
+		(*pt)[i].y = (int)((float)x * sin_theta + (float)y * cos_theta);
 		(*pt)[i].x = (int)((float)x * cos_theta - (float)y * sin_theta);
 		i++;
 	}
