@@ -131,7 +131,7 @@ void	mlx_close_image(t_mlx *mlx)
 
 static	void	put_pixel(t_mlx *mlx, int x, int y)
 {
-	mlx->img.data[(y + 200) * 600 + (x + 200)] = 0xFF0000;
+	mlx->img.data[(y + 200) * 600 + (x + 100)] = 0xFF0000;
 }
 
 void	mlx_draw_image(t_mlx *mlx, t_point **pt, int cols, int rows)
@@ -139,13 +139,15 @@ void	mlx_draw_image(t_mlx *mlx, t_point **pt, int cols, int rows)
 	int		y;
 	int		x;
 	
+	ft_putnbr(mlx->angle);
+	ft_putchar('\n');
 	y = 0;
 	while (y < cols)
 	{
 		x = 0;
 		while (x < rows)
 		{
-			put_pixel(&(*mlx), (*pt)[y * rows + x].x * 60 , (*pt)[y * rows + x].y * 60);
+			put_pixel(&(*mlx), (*pt)[y * rows + x].x , (*pt)[y * rows + x].y);
 			x++;
 		}
 
@@ -155,6 +157,25 @@ void	mlx_draw_image(t_mlx *mlx, t_point **pt, int cols, int rows)
 }
 
 
+static	int		key_hook(int keycode, void *param)
+{
+	t_mlx	*mlx;
+
+	mlx = (t_mlx*)param;
+	if (keycode % 100 == 30)
+	{
+		mlx->angle -= 1;
+		rotate_Z(&*(mlx->pt), mlx->cols, mlx->rows, mlx->angle);
+	}
+	if (keycode % 100 == 32)
+	{
+		mlx->angle += 1;
+		rotate_Z(&*(mlx->pt), mlx->cols, mlx->rows, mlx->angle);
+	}
+	mlx_clear_image(&*mlx);
+	mlx_draw_image(&*mlx, &*(mlx->pt), mlx->cols, mlx->rows);
+	return (0);
+}
 
 int	main(int argc, char **argv)
 {
@@ -177,7 +198,20 @@ int	main(int argc, char **argv)
 
 	pt = create_point(argc, argv, rows, cols);
 
+	int		i;
+	while (i < cols * rows)
+	{
+		pt[i].y *= 60;
+		pt[i].x *= 60;
+		i++;
+	}
+	rotate_Z(&pt, cols, rows, -10);
 	mlx_draw_image(&mlx, &pt, cols, rows);
+
+	mlx.pt = &pt;
+	mlx.cols = cols;
+	mlx.rows = rows;
+	mlx_key_hook(mlx.win, (*key_hook), &mlx);
 
 	mlx_loop(mlx.mlx_ptr);
 

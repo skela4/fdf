@@ -71,6 +71,10 @@ typedef struct	s_mlx
 	t_img		img;
 	int			w;
 	int			h;
+	t_point		**pt;
+	int 		cols;
+	int			rows;
+	int			angle;
 }				t_mlx;
 
 void	mlx_connect(t_mlx *mlx);
@@ -90,4 +94,6 @@ void	get_info_map(int fd, char *line, int cols, t_point **pt);
 
 t_point	*init_point(int cols, int rows);
 t_point	*create_point(int argc, char **argv, int rows, int cols);
+
+void	rotate_Z(t_point **pt, int cols, int rows, int angle);
 #endif
