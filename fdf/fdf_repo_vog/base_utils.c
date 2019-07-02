@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "gnl/libft/libft.h"
+#include "fdf.h"
 
 int			count_word(const char *str)
 {

@@ -16,6 +16,6 @@ int		ft_iscntrl(int c)
 {
 	if (!ft_isascii(c))
 		return (0);
-	return (((unsigned char)c >= 0 && (unsigned char)c <= 31)
+	return (((unsigned char)c <= 31)
 			|| (unsigned char)c == 127);
 }

@@ -64,7 +64,6 @@ void			get_z_and_color(char **tab, int tab_size, int *pos, t_point **pt)
 			(base = detect_base(cop)) ? (*pt)[*pos].z = atoi_base(cop, base) : 0;
 			(base = detect_base(sep + 1)) ? (*pt)[(*pos)++].color = atoi_base(sep + 1, base) : 0;
 			ft_strdel(&cop);
-			//ft_strdel(&sep);
 		}
 	}
 }

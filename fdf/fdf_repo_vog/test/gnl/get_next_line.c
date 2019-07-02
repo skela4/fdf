@@ -20,6 +20,8 @@ static int			read_fd(int fd, char **remainder, char **s, char *buff)
 	int				r;
 	char			*tmp;
 
+	r = 0;
+	tmp = NULL;
 	while (!(*remainder = ft_strchr(*s, '\n'))
 			&& (r = read(fd, buff, BUFF_SIZE)))
 	{
@@ -42,6 +44,10 @@ static int			get_line(const int fd, char **line, char **s)
 	char			*tmp;
 	int				len;
 
+	ret = 0;
+	remain = NULL;
+	tmp = NULL;
+	len = 0;
 	if (fd < 0 || !line || BUFF_SIZE < 1)
 		return (-1);
 	if ((ret = read_fd(fd, &remain, &*s, buffer)) < 0)
@@ -77,6 +83,8 @@ int					get_next_line(const int fd, char **line)
 	static	t_list	*file;
 	t_list			*current_file;
 	int				ret;
+
+	ret = 0;
 
 	if (fd < 0 || !line || BUFF_SIZE < 1)
 		return (-1);
