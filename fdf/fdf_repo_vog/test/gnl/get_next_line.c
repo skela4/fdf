@@ -6,13 +6,14 @@
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/09 11:47:45 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/07/02 06:12:56 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/07/02 06:48:18 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include "get_next_line.h"
 #include <unistd.h>
+#include <stdlib.h>
 
 static int			read_fd(int fd, char **remainder, char **s, char *buff)
 {
@@ -71,34 +72,12 @@ static	t_list		*list_file_fd(t_list **file, int fd)
 	return (*file);
 }
 
-static	void		ft_listdel(t_list **alst)
-{
-	t_list  *head;
-	t_list  *tmp;
-
-	if (alst && del && (head = *alst))
-	{
-		while (*alst)
-		{
-			tmp = *alst;
-			*alst = (*alst)->next;
-			if (tmp->content)
-				ft_strdel(&(tmp->content));
-			free(tmp);
-			tmp = NULL;
-		}
-		head = NULL;
-	}
-}
-
-
 int					get_next_line(const int fd, char **line)
 {
 	static	t_list	*file;
 	t_list			*current_file;
 	int				ret;
 
-	ft_putchar('X');
 	if (fd < 0 || !line || BUFF_SIZE < 1)
 		return (-1);
 	if (!file)
@@ -110,6 +89,6 @@ int					get_next_line(const int fd, char **line)
 		if (!(current_file->content = ft_strnew(BUFF_SIZE)))
 			return (-1);
 	ret = get_line(fd, &*line, (char **)&current_file->content);
-	ft_listdel(&current_file);
+	//ft_listdel(&current_file);
 	return (ret);
 }

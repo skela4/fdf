@@ -1,44 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstnew.c                                        :+:      :+:    :+:   */
+/*   ft_lstadd_end.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/19 04:47:57 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/07/02 06:10:36 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/01/17 16:57:02 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <stdlib.h>
 
-static	t_list	*add_link(t_list *list, char *str, size_t size)
+void	ft_lstadd_end(t_list **head_list, t_list *new_list)
 {
-	t_list	*tmp;
+	t_list	*last;
 
-	if (!(tmp = (t_list *)malloc(sizeof(t_list))))
-		return (NULL);
-	if (!str)
+	if (head_list && !(*head_list))
+		*head_list = new_list;
+	else if (head_list && *head_list && (last = *head_list))
 	{
-		tmp->content = NULL;
-		tmp->content_size = 0;
-		tmp->next = NULL;
+		while (last->next)
+			last = last->next;
+		last->next = new_list;
+		new_list->next = NULL;
 	}
-	else
-	{
-		tmp->content = ft_strdup(str);
-		tmp->content_size = size;
-		tmp->next = list;
-	}
-	return (tmp);
-}
-
-t_list			*ft_lstnew(void	const *content, size_t content_size)
-{
-	t_list	*list;
-
-	list = NULL;
-	list = add_link(list, (char *)content, content_size);
-	return (list);
 }
