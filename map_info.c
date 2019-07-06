@@ -6,44 +6,42 @@
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/04 06:36:20 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/07/04 12:01:45 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/07/06 06:32:17 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void            get_z_and_color(char **tab, int tab_size, int *pos, t_point **pt)
+void            get_z_and_color(char **t, int t_size, int *pos, t_vec **vec)
 {
-	int             i;
-	int             base;
-	char    *sep;
-	char    *cop;
+	int			i;
+	int			base;
+	char		*s;
+	char		*cop;
 
 	i = -1;
 	base = 0;
-	sep = NULL;
+	s = NULL;
 	cop = NULL;
-	while (++i < tab_size)
+	while (++i < t_size)
 	{
-		if (!(sep = ft_strchr(tab[i], ',')))
+		if (!(s = ft_strchr(t[i], ',')))
+			if ((base = detect_base(t[i])))
+				(*vec)[(*pos)++].z = atoi_base(t[i], base);
+		if (s)
 		{
-			if ((base = detect_base(tab[i])))
-				(*pt)[(*pos)++].z = atoi_base(tab[i], base);
-		}
-		else if (sep)
-		{
-			if (!(cop = ft_strsub(tab[i], 0, (ft_strlen(tab[i])) - ft_strlen(sep))))
+			if (!(cop = ft_strsub(t[i], 0, (ft_strlen(t[i])) - ft_strlen(s))))
 				return;
 			if ((base = detect_base(cop)))
-				(*pt)[*pos].z = atoi_base(cop, base);
-			if ((base = detect_base(sep + 1)))
-				(*pt)[(*pos)++].color = atoi_base(sep + 1, base);
+				(*vec)[*pos].z = atoi_base(cop, base);
+			if ((base = detect_base(s + 1)))
+				(*vec)[(*pos)++].c = atoi_base(s + 1, base);
 			ft_strdel(&cop);
 		}
 	}
 }
 
-int                     get_info_map(t_point **pt, int cols, char *file)
+int                     get_info_map(t_vec **vec, int cols, char *file)
 {
 	int             fd;
 	char    **tab;
@@ -60,7 +58,7 @@ int                     get_info_map(t_point **pt, int cols, char *file)
 	while (get_next_line(fd, &line) > 0)
 	{
 		tab = ft_strsplit(line, ' ');
-		get_z_and_color(tab, cols, &pos, &(*pt));
+		get_z_and_color(tab, cols, &pos, &(*vec));
 		i = 0;
 		while (i < cols)
 			ft_strdel(&tab[i++]);

@@ -6,7 +6,7 @@
 #    By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/07/04 07:02:38 by aahizi-e          #+#    #+#              #
-#    Updated: 2019/07/04 08:28:35 by aahizi-e         ###   ########.fr        #
+#    Updated: 2019/07/06 06:41:04 by aahizi-e         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,9 +19,9 @@ SRCS = main.c\
 	   file_utils.c\
 	   map_info.c\
 	   mlx_function.c\
-	   draw.c
+	   draw.c\
 
-FLAGS = -Wall -Wextra -Werror
+FLAGS = 
 
 LIBFT = libft/libft.a
 LIBMLX = minilibx_macos/libmlx.a
