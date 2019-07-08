@@ -1,43 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   base_utils.c                                       :+:      :+:    :+:   */
+/*   base_helper.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/01 05:47:23 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/07/04 15:50:13 by aahizi-e         ###   ########.fr       */
+/*   Created: 2019/07/08 05:06:11 by aahizi-e          #+#    #+#             */
+/*   Updated: 2019/07/08 13:41:05 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-int			count_word(const char *str)
+int					hc_to_hi(char c)
 {
-	int		sep;
-	int		wc;
-
-	sep = 0;
-	wc = 0;
-	if (!str)
-		return (-1);
-	while (*str)
-	{
-		if ((*str >= 9 && *str <= 13) || *str == 32)
-			sep = 0;
-		else if (sep == 0)
-		{
-			sep = 1;
-			++wc;
-		}
-		++str;
-	}
-	return (wc);
-}
-
-int			hc_to_hi(char c)
-{
-	int		value;
+	int				value;
 
 	value = -1;
 	if (c >= '0' && c <= '9')
@@ -49,12 +26,12 @@ int			hc_to_hi(char c)
 	return (value);
 }
 
-int			atoi_base(const char *str, int base)
+int					atoi_base(const char *str, int base)
 {
-	int		len;
-	int		power;
-	int		num;
-	int		sign;
+	int				len;
+	int				power;
+	long			num;
+	long			sign;
 
 	len = 0;
 	power = 1;
@@ -74,12 +51,12 @@ int			atoi_base(const char *str, int base)
 		num += hc_to_hi(str[len--]) * power;
 		power = power * base;
 	}
-	return (num * sign);
+	return ((int)(num * sign));
 }
 
-int			check_base(const char *str, const char *find)
+int					check_base(const char *str, const char *find)
 {
-	int		i;
+	int				i;
 
 	i = 0;
 	while (find[i])
@@ -93,17 +70,17 @@ int			check_base(const char *str, const char *find)
 	return (ft_strlen(str));
 }
 
-int			detect_base(char *str)
+int					detect_base(char *str)
 {
-	static const char	hex[] = "0123456789ABCDEFabcdef";
-	static const char	dec[] = "0123456789";
-	static const char	oct[] = "01234567";
-	static const char	bin[] = "01";
+	static char		hex[] = "0123456789ABCDEFabcdef";
+	static char		dec[] = "0123456789";
+	static char		oct[] = "01234567";
+	static char		bin[] = "01";
 
 	if (!str)
 		return (0);
 	if (!ft_strstr(str, "0B") && !ft_strstr(str, "0X")
-				&& !ft_strstr(str, "0b") && !ft_strstr(str, "0x"))
+			&& !ft_strstr(str, "0b") && !ft_strstr(str, "0x"))
 	{
 		if (str[0] == '0' && ft_strlen(str) > 1)
 			return (check_base(oct, str + 1));

@@ -6,7 +6,7 @@
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/09 11:47:45 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/07/04 07:14:39 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/07/08 07:40:39 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ static int			read_fd(int fd, char **remainder, char **s, char *buff)
 	int				r;
 	char			*tmp;
 
+	r = 0;
+	tmp = NULL;
 	while (!(*remainder = ft_strchr(*s, '\n'))
 			&& (r = read(fd, buff, BUFF_SIZE)))
 	{
@@ -40,6 +42,10 @@ static int			get_line(const int fd, char **line, char **s)
 	char			*tmp;
 	int				len;
 
+	ret = 0;
+	remain = NULL;
+	tmp = NULL;
+	len = 0;
 	if (fd < 0 || !line || BUFF_SIZE < 1)
 		return (-1);
 	if ((ret = read_fd(fd, &remain, &*s, buffer)) < 0)
@@ -75,6 +81,7 @@ int					get_next_line(const int fd, char **line)
 	static	t_list	*file;
 	t_list			*current_file;
 
+	current_file = NULL;
 	if (fd < 0 || !line || BUFF_SIZE < 1)
 		return (-1);
 	if (!file)

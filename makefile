@@ -6,7 +6,7 @@
 #    By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/07/04 07:02:38 by aahizi-e          #+#    #+#              #
-#    Updated: 2019/07/06 06:41:04 by aahizi-e         ###   ########.fr        #
+#    Updated: 2019/07/08 15:18:31 by aahizi-e         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,13 +15,14 @@ CC = gcc
 NAME = fdf
 
 SRCS = main.c\
-	   base_utils.c\
-	   file_utils.c\
-	   map_info.c\
-	   mlx_function.c\
+	   file_helper.c\
+	   base_helper.c\
+	   depth_color_helper.c\
 	   draw.c\
+	   loop_mlx.c\
+	   matrix.c\
 
-FLAGS = 
+FLAGS = -Wall -Wextra -Werror
 
 LIBFT = libft/libft.a
 LIBMLX = minilibx_macos/libmlx.a
@@ -35,12 +36,12 @@ all: $(NAME)
 $(NAME): $(OBJS) 
 	make -C libft/
 	make -C minilibx_macos/
-	$(CC) $(FLAGS) $(LIBFT) $(LIBMLX) $^ -o $@ -framework OpenGl -framework AppKit
+	$(CC) $(FLAGS) $(LIBFT) $(LIBMLX) $^ -o $@ -framework OpenGl -framework AppKit -lm
 
 sani: $(OBJS) 
 	make -C libft/
 	make -C minilibx_macos/
-	$(CC) $(FLAGS) -fsanitize=address $(LIBFT) $(LIBMLX) $^ -o $(NAME) -framework OpenGl -framework AppKit
+	$(CC) $(FLAGS) -fsanitize=address $(LIBFT) $(LIBMLX) $^ -o $(NAME) -framework OpenGl -framework AppKit -lm
 
 clean:
 	rm -rf $(OBJS)
