@@ -1,37 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   file_helper.c                                      :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/08 02:48:39 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/07/08 11:20:52 by aahizi-e         ###   ########.fr       */
+/*   Created: 2019/07/12 10:14:46 by aahizi-e          #+#    #+#             */
+/*   Updated: 2019/07/12 16:50:29 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-int				error_file(char *file, int ret, char **line, int err)
+int				error(const char *file, char **line, int zero)
 {
 	int			fd;
+	char		*err;
 
-	fd = 0;
+	errno = zero;
+	err = NULL;
 	fd = open(file, O_RDONLY);
-	if (fd == -1 || ret == -1 || err == -1)
+	if (fd == -1)
 	{
-		if (line && (*line))
-			ft_strdel(&(*line));
-		if (err == -1)
-			ft_putendl_fd("Error line length exiting", 2);
-		else
-			ft_putendl_fd("Error", 2);
-		exit(EXIT_FAILURE);
+		err = strerror(errno);
+		ft_putendl_fd(err, 2);
+		return (-1);
 	}
 	return (fd);
 }
 
-int				count_word(char *str)
+int				word_count(char *str)
 {
 	int			wc;
 	int			sep;
@@ -54,71 +52,77 @@ int				count_word(char *str)
 	return (wc);
 }
 
-int				count_line(char *file)
+int				line_length(const char *file, int lc, int wc)
 {
+	char		*line;
 	int			fd;
 	int			ret;
-	int			lc;
-	char		*line;
 
-	ret = 0;
-	lc = 0;
 	line = NULL;
-	fd = error_file(file, ret, &line, 0);
+	fd = error(file, &line, 0);
 	while ((ret = get_next_line(fd, &line)) > 0)
 	{
-		error_file(file, ret, &line, 0);
-		lc += 1;
-		ft_strdel(&line);
-	}
-	return (lc);
-}
-
-int				first_line(char *file)
-{
-	int			fd;
-	int			ret;
-	int			wc;
-	char		*line;
-
-	wc = 0;
-	ret = 0;
-	line = NULL;
-	fd = error_file(file, ret, &line, 0);
-	if ((ret = get_next_line(fd, &line)) > 0)
-	{
-		error_file(file, ret, &line, 0);
-		wc = count_word(line);
-		ft_strdel(&line);
-	}
-	return (wc);
-}
-
-int				length_line(char *file)
-{
-	int			fd;
-	int			ret;
-	int			lc;
-	int			wc;
-	char		*line;
-
-	fd = 0;
-	lc = 0;
-	wc = 0;
-	ret = 0;
-	line = NULL;
-	fd = error_file(file, ret, &line, 0);
-	while ((ret = get_next_line(fd, &line)) > 0)
-	{
-		error_file(file, ret, &line, 0);
 		lc += 1;
 		if (lc > 1)
 		{
-			if (wc != count_word(line))
-				error_file(file, ret, &line, -1);
+			if (wc != word_count(line))
+			{
+				ft_strdel(&line);
+				return (-1);
+			}
 		}
-		wc = count_word(line);
+		wc = word_count(line);
 		ft_strdel(&line);
 	}
+	if (line)
+		ft_strdel(&line);
+	if (ret == -1)
+		return (ret);
+	return (wc);
+}
+
+int				line_count(const char *file)
+{
+	int			lc;
+	char		*line;
+	int			fd;
+	int			ret;
+
+	lc = 0;
+	line = NULL;
+	fd = error(file, &line, 0);
+	while ((ret = get_next_line(fd, &line)) > 0)
+	{
+		lc += 1;
+		ft_strdel(&line);
+	}
+	if (line)
+		ft_strdel(&line);
+	if (ret == -1)
+		return (ret);
+	return (lc);
+}
+
+int				line_first(const char *file)
+{
+	int			wc;
+	char		*line;
+	int			fd;
+	int			ret;
+
+	wc = 0;
+	line = NULL;
+	fd = error(file, &line, 0);
+	if (fd == -1)
+		return (-1);
+	if ((ret = get_next_line(fd, &line)) > 0)
+	{
+		wc = word_count(line);
+		ft_strdel(&line);
+	}
+	if (line)
+		ft_strdel(&line);
+	if (ret == -1 || wc < 1)
+		return (-1);
 	return (wc);
 }

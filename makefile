@@ -6,7 +6,7 @@
 #    By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/07/04 07:02:38 by aahizi-e          #+#    #+#              #
-#    Updated: 2019/07/12 14:22:15 by aahizi-e         ###   ########.fr        #
+#    Updated: 2019/07/13 09:50:10 by clboutry         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,13 +16,19 @@ NAME = fdf
 
 SRCS = main.c\
 	   file_helper.c\
+	   color_helper.c\
 	   base_helper.c\
-	   depth_color_helper.c\
+	   mlx_helper.c\
+	   key_helper.c\
+	   rotation.c\
+	   projection.c\
 	   draw.c\
-	   loop_mlx.c\
+	   apply.c\
 	   matrix.c\
+	   memory.c\
 
 FLAGS = -Wall -Wextra -Werror
+
 
 LIBFT = libft/libft.a
 LIBMLX = minilibx_macos/libmlx.a
@@ -33,15 +39,10 @@ OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) 
+$(NAME): $(OBJS) fdf.h 
 	make -C libft/
 	make -C minilibx_macos/
-	$(CC) $(FLAGS) $(LIBFT) $(LIBMLX) $^ -o $@ -framework OpenGl -framework AppKit -lm
-
-sani: $(OBJS) 
-	make -C libft/
-	make -C minilibx_macos/
-	$(CC) $(FLAGS) -fsanitize=address $(LIBFT) $(LIBMLX) $^ -o $(NAME) -framework OpenGl -framework AppKit -lm
+	$(CC) $(FLAGS) $(LIBFT) $(LIBMLX) $(OBJS) -o $@ -framework OpenGl -framework AppKit -lm
 
 clean:
 	rm -rf $(OBJS)
@@ -50,5 +51,6 @@ clean:
 
 fclean: clean
 	rm -rf $(NAME)
+	make fclean -C libft/
 
 re: fclean all

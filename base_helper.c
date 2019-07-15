@@ -6,7 +6,7 @@
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/08 05:06:11 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/07/08 13:41:05 by aahizi-e         ###   ########.fr       */
+/*   Updated: 2019/07/13 01:28:06 by aahizi-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int					hc_to_hi(char c)
 int					atoi_base(const char *str, int base)
 {
 	int				len;
-	int				power;
+	long			power;
 	long			num;
 	long			sign;
 
@@ -43,15 +43,15 @@ int					atoi_base(const char *str, int base)
 		str++;
 	if (*str == '-' || *str == '+')
 		sign = (*(str++) == '-') ? -1 : 1;
-	len = ft_strlen(str) - 1;
+	len = (int)ft_strlen(str) - 1;
 	while (len >= 0 && ((str[len] >= 9 && str[len] <= 13) || str[len] == 32))
 		len--;
 	while (len >= 0 && (hc_to_hi(str[len]) >= 0 && hc_to_hi(str[len]) < base))
 	{
-		num += hc_to_hi(str[len--]) * power;
+		num += (long)hc_to_hi(str[len--]) * power;
 		power = power * base;
 	}
-	return ((int)(num * sign));
+	return (num * sign);
 }
 
 int					check_base(const char *str, const char *find)
@@ -65,9 +65,9 @@ int					check_base(const char *str, const char *find)
 			return (0);
 		i++;
 	}
-	if (ft_strlen(str) > 16)
-		return (ft_strlen(str) - 6);
-	return (ft_strlen(str));
+	if ((int)ft_strlen(str) > 16)
+		return ((int)ft_strlen(str) - 6);
+	return ((int)ft_strlen(str));
 }
 
 int					detect_base(char *str)
@@ -82,7 +82,7 @@ int					detect_base(char *str)
 	if (!ft_strstr(str, "0B") && !ft_strstr(str, "0X")
 			&& !ft_strstr(str, "0b") && !ft_strstr(str, "0x"))
 	{
-		if (str[0] == '0' && ft_strlen(str) > 1)
+		if (str[0] == '0' && (int)ft_strlen(str) > 1)
 			return (check_base(oct, str + 1));
 		else
 			return (check_base(dec, str));

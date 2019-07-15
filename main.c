@@ -5,86 +5,63 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aahizi-e <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/08 02:47:30 by aahizi-e          #+#    #+#             */
-/*   Updated: 2019/07/08 16:54:14 by aahizi-e         ###   ########.fr       */
+/*   Created: 2019/07/12 10:14:46 by aahizi-e          #+#    #+#             */
+/*   Updated: 2019/07/13 09:41:39 by clboutry         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static	t_file			file_info(char *file)
+static	int		file_info(t_file *info, const char *file)
 {
-	t_file				info;
-
-	info.nb_line = count_line(file);
-	info.len_line = length_line(file);
-	info.st_line = first_line(file);
-	if (!info.nb_line)
+	if (error(file, NULL, 0) == -1)
+		return (-1);
+	if ((info->st_line = line_first(file)) == -1)
 	{
 		ft_putendl_fd("No data found", 2);
-		exit(EXIT_FAILURE);
+		return (-1);
 	}
-	else if (info.nb_line && !info.st_line)
+	if ((info->nb_line = line_count(file)) == -1)
 	{
 		ft_putendl_fd("No data found", 2);
-		exit(EXIT_FAILURE);
+		return (-1);
 	}
-	else
+	if ((info->len_line = line_length(file, 0, 0)) == -1)
 	{
-		ft_putstr("number of line == ");
-		ft_putnbr(info.nb_line);
-		ft_putchar('\n');
-		ft_putstr("length of line == ");
-		ft_putnbr(info.len_line);
-		ft_putchar('\n');
+		ft_putendl_fd("Error line length exiting", 2);
+		return (-1);
 	}
-	return (info);
+	return (0);
 }
 
-int						calc_dist(int cols, int rows, int small_size)
+int				calc_dist(int cols, int rows, int smallest_size)
 {
-	int					dist;
-	int					hyp;
+	int			dist;
+	int			hyp;
 
 	dist = 1;
-	hyp = pow(rows * dist, 2) + pow(cols * dist, 2);
-	hyp = sqrt(hyp);
-	while (hyp < small_size)
+	hyp = sqrt(pow(rows * dist, 2) + pow(cols * dist, 2));
+	while (hyp < smallest_size)
 	{
 		dist += 1;
-		hyp = pow(rows * dist, 2) + pow(cols * dist, 2);
-		hyp = sqrt(hyp);
+		hyp = sqrt(pow(rows * dist, 2) + pow(cols * dist, 2));
 	}
 	return (dist - 1);
 }
 
-t_map					init_map(t_file info)
+static	t_vec	*set_vec(t_map *map, char ****z_c)
 {
-	t_map				map;
-
-	map.c = info.nb_line;
-	map.r = info.len_line;
-	map.cr = map.c * map.r;
-	if (H < W)
-		map.vec_dist = calc_dist(map.c, map.r, H);
-	else
-		map.vec_dist = calc_dist(map.c, map.r, W);
-	map.axe_x = 0;
-	map.axe_y = 0;
-	map.axe_z = 0;
-	return (map);
-}
-
-void					init_vec(t_map *map, char ***z_c)
-{
-	int					y;
-	int					x;
+	int			y;
+	int			x;
 
 	y = 0;
 	x = 0;
 	map->vec = (t_vec *)malloc(sizeof(*(map->vec)) * (map->cr));
 	if (!map->vec)
-		exit(EXIT_FAILURE);
+	{
+		free_tab3(&map->tab_depth_color, 0, map->c);
+		return (NULL);
+	}
 	while (y < map->c)
 	{
 		x = 0;
@@ -92,59 +69,47 @@ void					init_vec(t_map *map, char ***z_c)
 		{
 			map->vec[y * map->r + x].x = x * map->vec_dist;
 			map->vec[y * map->r + x].y = y * map->vec_dist;
-			map->vec[y * map->r + x].z = get_depth(z_c[y][x]);
-			map->vec[y * map->r + x].color = get_color(z_c[y][x]);
+			map->vec[y * map->r + x].z = get_depth(map, (*z_c)[y][x], 0, 0);
+			map->vec[y * map->r + x].color = get_color(map, (*z_c)[y][x], 0, 0);
 			x++;
 		}
 		y++;
 	}
+	return (map->vec);
 }
 
-int						main(int argc, char **argv)
+static	int		set_map(t_map *map, t_file *info, const char *file)
 {
-	t_file				info;
-	t_map				map;
-	char				***tab_depth_color;
+	char	***s;
 
-	tab_depth_color = NULL;
-	if (argc == 1)
+	set_map_value(map, info);
+	map->tab_depth_color = get_depth_color_s(file, map, 0, 0);
+	if (!map->tab_depth_color)
+		return (-1);
+	if (!(map->vec = set_vec(map, &map->tab_depth_color)))
 	{
-		ft_putendl_fd("Usage : ./fdf <filename> [ case_size z_size ]", 2);
-		exit(EXIT_FAILURE);
+		free_tab3(&map->tab_depth_color, 0, map->c);
+		return (-1);
 	}
-	info = file_info(argv[1]);
-	map = init_map(info);
-	tab_depth_color = get_depth_color_str(argv[1], &map);
-	init_vec(&map, tab_depth_color);
+	return (0);
+}
 
-	/* free */
+int				main(int argc, char **argv)
+{
+	t_file		info;
+	t_map		map;
 
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	while (tab_depth_color[i])
+	map.vec = NULL;
+	map.tab_depth_color = NULL;
+	if (argc != 2)
 	{
-		j = 0;
-		while (tab_depth_color[i][j])
-		{
-			free(tab_depth_color[i][j]);
-			tab_depth_color[i][j] = NULL;
-			j++;
-		}
-		free(tab_depth_color[i]);
-		tab_depth_color[i] = NULL;
-		i++;
+		ft_putendl_fd("Usage : ./fdf <path_to_map>", 2);
+		return (1);
 	}
-	free(tab_depth_color);
-	tab_depth_color = NULL;
-
-	/* free */
-
-	//vec_cpy = (t_vec *)ft_strnew(sizeof(*vec_cpy) * map.cr);
-	//ft_memcpy(vec_cpy, map.vec, sizeof(*vec_cpy) * map.cr);
-
-	draw(&map, NULL);
+	if (file_info(&info, argv[1]) == -1)
+		return (errno);
+	if (set_map(&map, &info, argv[1]) == -1)
+		return (1);
+	create_map(&map);
 	return (0);
 }
